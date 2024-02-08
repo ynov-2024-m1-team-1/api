@@ -1,51 +1,59 @@
-const { PrismaClient } = require('@prisma/client');
+const product = require('../schema/product.schema')
 
-const throwError = require('../utils/throwError');
-
-const prisma = new PrismaClient();
-
-exports.getProducts = async (req, res, next) => {
+exports.getProducts = async(req, res, next)=>{
     try {
-        const products = await prisma.product.findMany({
-            where: { active: true },
-            take: req.query.take ? Number(req.query.take) : 8,
-        });
-        if (!products) {
-            const err = throwError('No products found', 404);
-            return next(err);
-        }
-        return res.send(
+        const products = await product.find();
+        console.log(`product : ${products}`);
+        return res.json(
             {
-                success: true,
+                message: "Success",
+                code: 200,
+                data: products,
+            },
+        );
+
+    } catch(err) {
+        console.log(`erreur : ${err}`);
+        return res.json(
+            {
+                message: "Failed to retrieves products",
+                code: 400,
+            },
+        );
+    }
+
+}
+exports.getProduct = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            return res.json({
+                code: 400,
+                message: "Id is required",
+            })
+        }
+        const products = await product.findById(String(id));
+        if (!product) {
+            return res.json({
+                code: 404,
+                message: "Product not found",
+            })
+        }
+        return res.json(
+            {
+                message: "Success",
+                code: 200,
                 data: products,
             },
         );
     } catch (err) {
-        return next(err);
+        console.log(`erreur : ${err}`);
+        return res.json(
+            {
+                message: "bad request",
+                code: 400,
+            },
+        );
     }
 };
 
-exports.getProduct = async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        if (!id) {
-            const err = throwError('No product id provided', 404);
-            next(err);
-        }
-        const product = await prisma.product.findUnique({
-            where: { id: Number(id) },
-        });
-        if (!product) {
-            const err = throwError('Product not found', 404);
-            return next(err);
-        }
-        return res.json(
-            {
-                data: product,
-                sucess: true,
-            },
-        );
-    } catch (err) {
-        return next(err);
-    }
-};

@@ -3,6 +3,7 @@ const cors = require('cors');
 const errorHandler = require('./middlewares/errorsHandling');
 const config = require('./config');
 const routes = require('./routes');
+require("./mongoConnection");
 
 const app = express();
 
@@ -26,7 +27,8 @@ app.use(express.static(__dirname + '/public'));
 
 // initial route
 app.get('/', (req, res) => {
-    res.send({ message: 'Welcome to app-store-api application.' });
+    res.json({ message: 'Welcome to app-store-api application.' });
+
 });
 
 // api routes prefix
