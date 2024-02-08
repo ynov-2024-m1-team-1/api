@@ -14,12 +14,12 @@ async function hashPassword(password) {
 }
 
 exports.Register = async (req, res, next) => {
-    const { name, surname, mail, password, adress, postalCode, town, phone } =
+    const { firstname, lastname, mail, password, adress, postalCode, town, phone } =
         req.body;
 
     if (
-        !name ||
-        !surname ||
+        !firstname ||
+        !lastname ||
         !mail ||
         !password ||
         !adress ||
@@ -47,8 +47,8 @@ exports.Register = async (req, res, next) => {
         }
 
         const newUser = await User.create({
-            name,
-            surname,
+            firstname,
+            lastname,
             mail,
             password: await hashPassword(password),
             adress,
