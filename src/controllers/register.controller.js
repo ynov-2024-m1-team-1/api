@@ -17,17 +17,19 @@ exports.Register = async (req, res, next) => {
         return res.send({
             message: "Missing required fields",
             code: 400,
-            data: req.body,
         });
     }
 
     try {
-        const existingUser = await User.findOne({ mail });
-        if (existingUser) {
+        const existingUserByEmail = await User.findOne({ mail });
+        const existingUserByPhone = await User.findOne({ phone });
+        if (existingUserByEmail || existingUserByPhone) {
             return res.send({
-                message: "Email already exists",
+                message:
+                    (existingUserByEmail ? "email" : "phone number") +
+                    " already exists",
                 code: 409,
-                data: mail,
+                data: existingUserByEmail ? mail : phone,
             });
         }
 
@@ -41,10 +43,6 @@ exports.Register = async (req, res, next) => {
             town,
             phone,
         });
-        console.log(newUser);
-
-        await newUser.save();
-
         return res.send({
             message: "User resgistered successfully",
             code: 200,
