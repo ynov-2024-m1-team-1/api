@@ -3,6 +3,7 @@ const cors = require('cors');
 const errorHandler = require('./middlewares/errorsHandling');
 const config = require('./config');
 const routes = require('./routes');
+require("./mongoConnection");
 
 const app = express();
 
