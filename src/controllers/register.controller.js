@@ -1,46 +1,60 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const User = require('./schema/user.schema.js'); 
-require('./mongoConnection');
+const User = require("../schema/user.schema.js");
 
-const app = express();
+exports.Register = async (req, res, next) => {
+    const { name, surname, mail, password, adress, postalCode, town, phone } =
+        req.body;
 
-app.use(bodyParser.json());
-
-
-app.post('/register', async (req, res) => {
-  const { lastname, surname, mail, password, adresse, codePostal, ville, telephone } = req.body;
-
-  if (!lastname || !surname || !mail || !password || !adresse || !codePostal || !ville || !telephone) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
-  try {
-    const existingUser = await User.findOne({ mail });
-    if (existingUser) {
-      return res.status(409).json({ error: 'Email already exists' });
+    if (
+        !name ||
+        !surname ||
+        !mail ||
+        !password ||
+        !adress ||
+        !postalCode ||
+        !town ||
+        !phone
+    ) {
+        return res.send({
+            message: "Missing required fields",
+            code: 400,
+            data: req.body,
+        });
     }
 
-    const newUser = new User({
-      lastname,
-      surname,
-      mail,
-      password,
-      adresse,
-      codePostal,
-      ville,
-      telephone,
-    });
+    try {
+        const existingUser = await User.findOne({ mail });
+        if (existingUser) {
+            return res.send({
+                message: "Email already exists",
+                code: 409,
+                data: mail,
+            });
+        }
 
-    await newUser.save();
+        const newUser = User.create({
+            name,
+            surname,
+            mail,
+            password,
+            adress,
+            postalCode,
+            town,
+            phone,
+        });
+        console.log(newUser);
 
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+        await newUser.save();
 
-app.listen(() => {
-  console.log(`Server is running on http://localhost:${process.env.PORT}`);
-});
+        return res.send({
+            message: "User resgistered successfully",
+            code: 200,
+            data: newUser,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.send({
+            message: error.message,
+            code: 500,
+        });
+    }
+};
