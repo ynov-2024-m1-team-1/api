@@ -1,6 +1,6 @@
 const User = require("../schema/user.schema.js");
 const bcrypt = require("bcrypt");
-
+const  senderEmail  = require('../brevo/emailSender.js')
 const saltRounds = 10;
 
 async function hashPassword(password) {
@@ -64,11 +64,14 @@ exports.Register = async (req, res, next) => {
             town,
             phone,
         });
-        return res.send({
+
+        res.send({
             message: "User resgistered successfully",
             code: 200,
             data: newUser,
         });
+        senderEmail(newUser);
+ 
     } catch (error) {
         console.error(error);
         return res.send({
