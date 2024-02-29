@@ -4,14 +4,13 @@ module.exports = function senderEmail(user) {
     let apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
     let apiKey = apiInstance.authentications['apiKey'];
-    console.log(process.env.BREVO_KEY)
     apiKey.apiKey = process.env.BREVO_KEY;
     
     let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); 
     
     sendSmtpEmail.subject = "New user";
     sendSmtpEmail.sender = {"name":"John Doe","email":"example@gmail.com"};
-  sendSmtpEmail.to = [{ "email": `${user.mail}`, "name": `${user.name} ${user.surname}`}, {"email":"admin@gmail.com","name":`Admin ADMIN`}];
+    sendSmtpEmail.to = [{ "email": `${user.mail}`, "name": `${user.name} ${user.surname}`}];
     sendSmtpEmail.htmlContent = `<!DOCTYPE html>
     <html lang="en">
     <head>
