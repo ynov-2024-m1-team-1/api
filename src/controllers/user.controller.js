@@ -1,6 +1,12 @@
 const user = require('../schema/user.schema')
 
 exports.getUsers = async(req, res, next)=>{
+    if(!req.userToken.admin){
+        return res.json({
+            code: 401,
+            message: "Admin access required",
+        })
+    }
     try {
         const users = await user.find();
         if (!users) {
@@ -30,12 +36,19 @@ exports.getUsers = async(req, res, next)=>{
 }
 
 exports.getUser = async (req, res, next) => {
+
     try {
         const id = req.params.id;
         if (!id) {
             return res.json({
                 code: 400,
                 message: "Id is required",
+            })
+        }
+        if(id !== req.userToken.id || req.userToken.admin != true){
+            return res.json({
+                code: 401,
+                message: "Unauthorized",
             })
         }
         const users = await user.findById(String(id));
@@ -72,6 +85,12 @@ exports.deleteUser = async (req, res, next) => {
                 message: "Id is required",
             })
         }
+        if(id !== req.userToken.id || req.userToken.admin != true){
+            return res.json({
+                code: 401,
+                message: "Unauthorized",
+            })
+        }
         const users = await user.deleteOne({ _id: id });
         if (!users) {
             return res.json({
@@ -105,6 +124,12 @@ exports.updateUser = async (req, res, next) => {
             return res.json({
                 code: 400,
                 message: "Id is required",
+            })
+        }
+        if(id !== req.userToken.id || req.userToken.admin != true){
+            return res.json({
+                code: 401,
+                message: "Unauthorized",
             })
         }
         const users = await user.findByIdAndUpdate(String(id), body, {returnDocument: 'after'});
