@@ -1,17 +1,17 @@
 const SibApiV3Sdk = require('@getbrevo/brevo');
-require('dotenv').config();
 
 module.exports = function senderEmail(user) {
     let apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 
     let apiKey = apiInstance.authentications['apiKey'];
+    console.log(process.env.BREVO_KEY)
     apiKey.apiKey = process.env.BREVO_KEY;
     
     let sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); 
     
     sendSmtpEmail.subject = "New user";
     sendSmtpEmail.sender = {"name":"John Doe","email":"example@gmail.com"};
-    sendSmtpEmail.to = [{"email":`${user.mail}`,"name":`${user.firstname} ${user.lastname}`}, {"email":"admin@gmail.com","name":`Admin ADMIN`}];
+  sendSmtpEmail.to = [{ "email": `${user.mail}`, "name": `${user.name} ${user.surname}`}, {"email":"admin@gmail.com","name":`Admin ADMIN`}];
     sendSmtpEmail.htmlContent = `<!DOCTYPE html>
     <html lang="en">
     <head>
@@ -29,8 +29,8 @@ module.exports = function senderEmail(user) {
             <p style="color: #666666;">User <strong>${user.mail}</strong> has just registered on your website/application.</p>
             <p style="color: #666666;">Here are some details:</p>
             <ul style="color: #666666;">
-              <li><strong>Firstname:</strong> ${user.firstname}</li>
-              <li><strong>Lastname:</strong> ${user.lastname}</li>
+              <li><strong>Firstname:</strong> ${user.name}</li>
+              <li><strong>Lastname:</strong> ${user.surname}</li>
               <!-- Add more user details as needed -->
             </ul>
             <p style="color: #666666;">Thank you for your attention.</p>

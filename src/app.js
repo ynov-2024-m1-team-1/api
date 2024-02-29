@@ -5,6 +5,8 @@ const config = require("./config");
 const routes = require("./routes");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
+const dotenv = require("dotenv");
+dotenv.config();
 require("./mongoConnection");
 
 const app = express();
