@@ -1,33 +1,48 @@
 /**
  * @swagger
  * tags:
- *   name: Products
- *   description: Operations related to products
+ *   name: Users
+ *   description: Operations related to users
  *
  * definitions:
- *   Product:
+ *   User:
  *     type: object
  *     properties:
  *       _id:
  *         type: string
- *       name:
+ *       firstname:
  *         type: string
- *         description: Name of the product
- *       description:
+ *         description: First name of the user
+ *       lastname:
  *         type: string
- *         description: Description of the product
- *       image:
+ *         description: Last name of the user
+ *       mail:
  *         type: string
- *         description: URL of the product image
- *       active:
+ *         description: Email address of the user
+ *       password:
+ *         type: string
+ *         description: Password of the user
+ *       adress:
+ *         type: string
+ *         description: Address of the user
+ *       postalCode:
+ *         type: number
+ *         description: Postal code of the user
+ *       town:
+ *         type: string
+ *         description: Town of the user
+ *       phone:
+ *         type: string
+ *         description: Phone number of the user
+ *       admin:
  *         type: boolean
- *         description: Indicates if the product is active
- *       packshot:
- *         type: string
- *         description: URL of the product packshot image
- *       price:
- *         type: string
- *         description: Price of the product
+ *         default: false
+ *         description: Indicates if the user is an admin
+ *       wishlist:
+ *         type: array
+ *         items:
+ *           type: string
+ *         description: Array of product IDs in the user's wishlist
  *
  *   ErrorResponse:
  *     type: object
@@ -37,41 +52,51 @@
  *       code:
  *         type: integer
  *
- * /products/{id}:
+ * /users/{id}:
  *   get:
- *     summary: Get a product by ID
- *     tags: [Products]
+ *     summary: Get a user by ID
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Product ID
+ *         description: User ID
  *         schema:
  *           type: string
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       '200':
  *         description: Successful retrieval
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/definitions/Product'
+ *               $ref: '#/definitions/User'
  *       '400':
  *         description: Bad request or missing ID
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
+ *       '401':
+ *         description: Unauthorized - User not admin or not the owner of the profile
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/ErrorResponse'
  *       '404':
- *         description: Not Found - Product not found
+ *         description: Not Found - User not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
  *
- * /products:
+ * /users:
  *   get:
- *     summary: Get all products
- *     tags: [Products]
+ *     summary: Get all users
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       '200':
  *         description: Successful retrieval
@@ -87,23 +112,29 @@
  *                 data:
  *                   type: array
  *                   items:
- *                     $ref: '#/definitions/Product'
- *       '400':
- *         description: Bad request
+ *                     $ref: '#/definitions/User'
+ *       '401':
+ *         description: Unauthorized - Admin access required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/definitions/ErrorResponse'
+ *       '404':
+ *         description: Not Found - Users not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
  *
- * /products/delete/{id}:
+ * /users/delete/{id}:
  *   delete:
- *     summary: Delete a product by ID
- *     tags: [Products]
+ *     summary: Delete a user by ID
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Product ID
+ *         description: User ID
  *         schema:
  *           type: string
  *     security:
@@ -114,7 +145,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/definitions/Product'
+ *               $ref: '#/definitions/User'
  *       '400':
  *         description: Bad request or missing ID
  *         content:
@@ -122,27 +153,27 @@
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
  *       '401':
- *         description: Unauthorized - User not admin
+ *         description: Unauthorized - User not admin or not the owner of the profile
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
  *       '404':
- *         description: Not Found - Product not found
+ *         description: Not Found - User not found
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
  *
- * /products/update/{id}:
+ * /users/update/{id}:
  *   put:
- *     summary: Update a product by ID
- *     tags: [Products]
+ *     summary: Update a user by ID
+ *     tags: [Users]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: Product ID
+ *         description: User ID
  *         schema:
  *           type: string
  *     requestBody:
@@ -150,7 +181,7 @@
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/definitions/Product'
+ *             $ref: '#/definitions/User'
  *     security:
  *       - BearerAuth: []
  *     responses:
@@ -159,7 +190,7 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/definitions/Product'
+ *               $ref: '#/definitions/User'
  *       '400':
  *         description: Bad request or missing ID
  *         content:
@@ -167,13 +198,13 @@
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
  *       '401':
- *         description: Unauthorized - User not admin
+ *         description: Unauthorized - User not admin or not the owner of the profile
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/definitions/ErrorResponse'
  *       '404':
- *         description: Not Found - Product not found
+ *         description: Not Found - User not found
  *         content:
  *           application/json:
  *             schema:
@@ -184,11 +215,11 @@
 const express = require("express");
 const checkJWT = require("../middlewares/checkJWT");
 const router = express.Router();
-const productController = require("../controllers/product.controller");
+const userController = require("../controllers/user.controller");
 
-router.get("/:id", productController.getProduct);
-router.get("/", productController.getProducts);
-router.delete("/delete/:id", checkJWT, productController.deleteProduct);
-router.put("/update/:id", checkJWT, productController.updateProduct);
+router.get("/:id", checkJWT, userController.getUser);
+router.get("/", checkJWT, userController.getUsers);
+router.delete("/delete/:id", checkJWT, userController.deleteUser);
+router.put("/update/:id", checkJWT, userController.updateUser);
 
 module.exports = router;

@@ -1,45 +1,15 @@
 const product = require("../schema/product.schema");
+const User = require("../schema/user.schema.js");
 
-exports.getProducts = async (req, res, next) => {
+
+exports.getWhishlists = async (req, res) => {
     try {
         const products = await product.find();
-        if (!products) {
+        if (!products)
             return res.json({
+                message: "Not found",
                 code: 404,
-                message: "Product not found",
             });
-        }
-        return res.json({
-            message: "Success",
-            code: 200,
-            data: products,
-        });
-    } catch (err) {
-        console.log(`erreur : ${err}`);
-        return res.json({
-            message: "Failed to retrieves products",
-            code: 400,
-        });
-    }
-};
-
-exports.getProduct = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        if (!id) {
-            return res.json({
-                code: 400,
-                message: "Id is required",
-            });
-        }
-        const products = await product.findById(String(id));
-        if (!products) {
-            return res.json({
-                code: 404,
-                message: "Product not found",
-            });
-        }
-
         return res.json({
             message: "Success",
             code: 200,
@@ -54,14 +24,8 @@ exports.getProduct = async (req, res, next) => {
     }
 };
 
-exports.deleteProduct = async (req, res, next) => {
+exports.getWhishlist = async (req, res, next) => {
     try {
-        if (!req.userToken.admin) {
-            return res.json({
-                code: 401,
-                message: "Unauthorized",
-            });
-        }
         const id = req.params.id;
         if (!id) {
             return res.json({
@@ -69,7 +33,36 @@ exports.deleteProduct = async (req, res, next) => {
                 message: "Id is required",
             });
         }
+        const products = await product.findOne({ _id: id });
+        if (!products) {
+            return res.json({
+                code: 404,
+                message: "Product not found",
+            });
+        }
+        return res.json({
+            message: "Success",
+            code: 200,
+            data: products,
+        });
+    } catch (err) {
+        console.log(`erreur : ${err}`);
+        return res.json({
+            message: "bad request",
+            code: 400,
+        });
+    }
+};
 
+exports.deleteWhishlist = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            return res.json({
+                code: 400,
+                message: "Id is required",
+            });
+        }
         const products = await product.deleteOne({ _id: id });
         if (!products) {
             return res.json({
@@ -91,31 +84,21 @@ exports.deleteProduct = async (req, res, next) => {
     }
 };
 
-exports.updateProduct = async (req, res, next) => {
+exports.addWhishlist = async (req, res, next) => {
     try {
-        if (!req.userToken.admin) {
-            return res.json({
-                code: 401,
-                message: "Unauthorized",
-            });
-        }
-        const id = req.params.id;
-        const body = req.body;
-        if (!id || !body) {
+        const { name, price, description, image } = req.body;
+        if (!name || !price || !description || !image) {
             return res.json({
                 code: 400,
-                message: "Id is required",
+                message: "Missing required fields",
             });
         }
-        const products = await product.findByIdAndUpdate(String(id), body, {
-            returnDocument: "after",
+        const products = await product.create({
+            name,
+            price,
+            description,
+            image,
         });
-        if (!products) {
-            return res.json({
-                code: 404,
-                message: "Product not found",
-            });
-        }
         return res.json({
             message: "Success",
             code: 200,
