@@ -19,10 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // cors
 
-if (process.env.FRONTEND_URL) {
+if (process.env.DEBUG === 'true') {
     app.use(cors({
         credentials: true,
-        origin: process.env.FRONTEND_URL
+        origin: '*/*'
     }))
 }
 else {
