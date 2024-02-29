@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 function mongoConnect() {
     mongoose
         .connect(
-            `mongodb+srv://Kyllian:${process.env.MONGO_PASS}@myappcluster.1uomsia.mongodb.net/?retryWrites=true&w=majority`
+            `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@myappcluster.1uomsia.mongodb.net/?retryWrites=true&w=majority`
         )
         .then(() => {
             console.log("Connected to database");
