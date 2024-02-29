@@ -3,6 +3,8 @@ const cors = require("cors");
 const errorHandler = require("./middlewares/errorsHandling");
 const config = require("./config");
 const routes = require("./routes");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 require("./mongoConnection");
 
 const app = express();
@@ -33,6 +35,25 @@ app.use("/api", routes);
 
 // error handling
 app.use(errorHandler);
+
+const options = {
+    definition: {
+        openapi: "3.1.0",
+        info: {
+            title: "Dream team API",
+            version: "0.1.0",
+            description: "This is the api for the dream team project",
+            license: {
+                name: "MIT",
+                url: "https://spdx.org/licenses/MIT.html",
+            },
+        },
+    },
+    apis: ["./src/routes/*.js"],
+};
+
+const specs = swaggerJsdoc(options);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // run server
 app.listen(config.port, () => {
