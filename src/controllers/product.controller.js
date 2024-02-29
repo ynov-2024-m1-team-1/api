@@ -2,6 +2,9 @@ const product = require('../schema/product.schema')
 
 exports.getProducts = async(req, res, next)=>{
     try {
+
+        console.log(req.user);
+
         const products = await product.find();
         if (!products) {
             return res.json({

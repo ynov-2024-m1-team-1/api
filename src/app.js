@@ -25,6 +25,8 @@ app.use(express.static(__dirname + "/public"));
 
 // initial route
 app.get("/", (req, res) => {
+
+    console.log(req.headers.authorization);
     res.send({ message: "Welcome to app-store-api application." });
 });
 
