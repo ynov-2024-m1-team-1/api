@@ -56,6 +56,12 @@ exports.getProduct = async (req, res, next) => {
 
 exports.deleteProduct = async (req, res, next) => {
     try {
+        if (!req.userToken.admin) {
+            return res.json({
+                code: 401,
+                message: "Unauthorized",
+            });
+        }
         const id = req.params.id;
         if (!id) {
             return res.json({
@@ -85,7 +91,14 @@ exports.deleteProduct = async (req, res, next) => {
 };
 
 exports.updateProduct = async (req, res, next) => {
+    console.log(req.userToken)
     try {
+        if (!req.userToken.admin) {
+            return res.json({
+                code: 401,
+                message: "Unauthorized",
+            });
+        }
         const id = req.params.id;
         const body = req.body;
         if (!id || !body) {
