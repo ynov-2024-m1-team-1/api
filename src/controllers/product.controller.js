@@ -51,6 +51,8 @@ exports.getProduct = async (req, res, next) => {
             message: "bad request",
             code: 400,
         });
+        }
+    }
 
 exports.deleteProduct = async (req, res, next) => {
     try {
@@ -67,7 +69,7 @@ exports.deleteProduct = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-    }
+    
     const products = await product.deleteOne({ _id: id });
     if (!products) {
       return res.json({
