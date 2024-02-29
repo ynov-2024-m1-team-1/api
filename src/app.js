@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 if (process.env.DEBUG === 'true') {
     app.use(cors({
         credentials: true,
-        origin: '*/*'
+        origin: '*'
     }))
 }
 else {
