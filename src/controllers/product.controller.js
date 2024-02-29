@@ -104,7 +104,7 @@ exports.updateProduct = async (req, res, next) => {
         message: 'Id is required',
       });
     }
-    const products = await product.updateOne({ _id: id }, body);
+    const products = await product.findByIdAndUpdate(String(id), body, {returnDocument: 'after'});
     if (!products) {
       return res.json({
         code: 404,

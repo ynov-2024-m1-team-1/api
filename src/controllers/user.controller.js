@@ -107,7 +107,7 @@ exports.updateUser = async (req, res, next) => {
                 message: "Id is required",
             })
         }
-        const users = await user.updateOne({ _id: id }, body);
+        const users = await user.findByIdAndUpdate(String(id), body, {returnDocument: 'after'});
         if (!users) {
             return res.json({
                 code: 404,
