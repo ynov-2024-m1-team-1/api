@@ -18,11 +18,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // cors
-app.use(
-    cors({
-        origin: config.frontend_url,
-    })
-);
+
+if (process.env.FRONTEND_URL) {
+    app.use(cors({
+        credentials: true,
+        origin: process.env.FRONTEND_URL
+    }))
+}
+else {
+    app.use(cors({
+        credentials: true,
+        origin: ['http://team.faldin.xyz', 'https://team.faldin.xyz']
+    }))
+}
+
 
 //access to public folder
 app.use(express.static(__dirname + "/public"));
