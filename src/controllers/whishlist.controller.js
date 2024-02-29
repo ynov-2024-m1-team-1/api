@@ -1,114 +1,87 @@
-const product = require("../schema/product.schema");
 const User = require("../schema/user.schema.js");
 
+exports.addWhishlist = async (req, res) => {
+    console.log(req.userToken);
+    console.log(req.query);
+
+    try {
+        const userId = req.userToken.id;
+        const user = await User.findById(userId);
+        console.log(user);
+
+        if (!user) {
+            return res.json({
+                message: "User not found",
+                code: 404,
+            });
+        }
+
+        user.wishlist.push(req.query.productId);
+        await user.save();
+        return res.json({
+            message: "Product added to wishlist successfully",
+            code: 200,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.json({
+            message: "Internal server error",
+            code: 500,
+        });
+    }
+};
 
 exports.getWhishlists = async (req, res) => {
+    console.log("req.userToken", req.userToken);
+
     try {
-        const products = await product.find();
-        if (!products)
+        const userId = req.userToken.id;
+        console.log("userId", userId);
+
+        const user = await User.findById(userId);
+        console.log(user);
+
+        if (!user) {
             return res.json({
-                message: "Not found",
+                message: "User not found",
                 code: 404,
             });
+        }
         return res.json({
-            message: "Success",
+            message: "wishlist: user.wishlist",
             code: 200,
-            data: products,
         });
-    } catch (err) {
-        console.log(`erreur : ${err}`);
+    } catch (error) {
+        console.error(error);
         return res.json({
-            message: "bad request",
-            code: 400,
+            message: "Internal server error",
+            code: 500,
         });
     }
 };
 
-exports.getWhishlist = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        if (!id) {
-            return res.json({
-                code: 400,
-                message: "Id is required",
-            });
-        }
-        const products = await product.findOne({ _id: id });
-        if (!products) {
-            return res.json({
-                code: 404,
-                message: "Product not found",
-            });
-        }
-        return res.json({
-            message: "Success",
-            code: 200,
-            data: products,
-        });
-    } catch (err) {
-        console.log(`erreur : ${err}`);
-        return res.json({
-            message: "bad request",
-            code: 400,
-        });
-    }
-};
+exports.deleteWhishlist = async (req, res) => {
+    console.log("userId");
 
-exports.deleteWhishlist = async (req, res, next) => {
-    try {
-        const id = req.params.id;
-        if (!id) {
-            return res.json({
-                code: 400,
-                message: "Id is required",
-            });
-        }
-        const products = await product.deleteOne({ _id: id });
-        if (!products) {
-            return res.json({
-                code: 404,
-                message: "Product not found",
-            });
-        }
+    const userId = req.userToken.id;
+    const user = await User.findById(userId);
+    const productId = req.query.productId
+    console.log(user);
+    if (!user) {
         return res.json({
-            message: "Success",
-            code: 200,
-            data: products,
-        });
-    } catch (err) {
-        console.log(`erreur : ${err}`);
-        return res.json({
-            message: "bad request",
-            code: 400,
+            message: "User not found",
+            code: 404,
         });
     }
-};
 
-exports.addWhishlist = async (req, res, next) => {
-    try {
-        const { name, price, description, image } = req.body;
-        if (!name || !price || !description || !image) {
-            return res.json({
-                code: 400,
-                message: "Missing required fields",
-            });
-        }
-        const products = await product.create({
-            name,
-            price,
-            description,
-            image,
-        });
-        return res.json({
-            message: "Success",
-            code: 200,
-            data: products,
-        });
-    } catch (err) {
-        console.log(`erreur : ${err}`);
-        return res.json({
-            message: "bad request",
-            code: 400,
-        });
-    }
+    await user.deleteOne(
+        { "user.wishlist": productId }
+        
+      );
+
+    console.log(user);
+
+    res.send(user.wishlist)
+
+   
 };
