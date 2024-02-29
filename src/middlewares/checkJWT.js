@@ -1,26 +1,19 @@
 const jwt = require("jsonwebtoken");
 
-const checkjwt = (err, req, res, next) => {
-    console.log("test")
+function verifyToken(req, res, next) {
+    let token = req.headers.authorization;
 
-    const jwtHeader = req.headers.authorization
-    if (!jwtHeader) {
-        return res.status(401).json({ message: "jwt not found" });
+    if (!token) {
+        return next({ message: "Missing token" });
     }
-    const token = jwtHeader.split(" ")[1];
-    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-            return res.status(403).json({ message: "jwt not valid" });
+    const jwtToken = token.split(" ")[1];
+    jwt.verify(jwtToken, process.env.JWT_SECRET, function (error, jwtDecoded) {
+        if (error) {
+            return next(error);
         }
-
-        console.log(user)
-
-
-
-
-        req.user = user;
+        req.userToken = jwtDecoded;
         next();
-    });   
-};
+    });
+}
 
-module.exports = checkjwt;
+module.exports = verifyToken;
