@@ -51,8 +51,6 @@ exports.getProduct = async (req, res, next) => {
             message: "bad request",
             code: 400,
         });
-    }
-};
 
 exports.deleteProduct = async (req, res, next) => {
     try {
@@ -69,29 +67,33 @@ exports.deleteProduct = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-        const products = await product.deleteOne({ _id: id });
-        if (!products) {
-            return res.json({
-                code: 404,
-                message: "Product not found",
-            });
-        }
-        return res.json({
-            message: "Success",
-            code: 200,
-            data: products,
-        });
-    } catch (err) {
-        console.log(`erreur : ${err}`);
-        return res.json({
-            message: "bad request",
-            code: 400,
-        });
     }
+    const products = await product.deleteOne({ _id: id });
+    if (!products) {
+      return res.json({
+        code: 404,
+        message: 'Product not found',
+      });
+    }
+    return res.json(
+      {
+        message: 'Success',
+        code: 200,
+        data: products,
+      },
+    );
+  } catch (err) {
+    console.log(`erreur : ${err}`);
+    return res.json(
+      {
+        message: 'bad request',
+        code: 400,
+      },
+    );
+  }
 };
 
 exports.updateProduct = async (req, res, next) => {
-    console.log(req.userToken)
     try {
         if (!req.userToken.admin) {
             return res.json({
@@ -107,14 +109,14 @@ exports.updateProduct = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-        const products = await product.updateOne({ _id: id }, body);
-        if (!products) {
-            return res.json({
-                code: 404,
-                message: "Product not found",
-            });
-        }
-        return res.json({
+    const products = await product.findByIdAndUpdate(String(id), body, {returnDocument: 'after'});
+    if (!products) {
+      return res.json({
+        code: 404,
+        message: 'Product not found',
+      });
+    }
+    return res.json({
             message: "Success",
             code: 200,
             data: products,
