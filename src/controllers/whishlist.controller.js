@@ -1,26 +1,21 @@
 const User = require("../schema/user.schema.js");
 
 exports.addWhishlist = async (req, res) => {
-    console.log(req.userToken);
-    console.log(req.query);
-
     try {
         const userId = req.userToken.id;
-        const user = await User.findById(userId);
-        console.log(user);
-
+        const user = await User.findById(String(userId));
         if (!user) {
             return res.json({
                 message: "User not found",
                 code: 404,
             });
         }
-
         user.wishlist.push(req.query.productId);
         await user.save();
         return res.json({
             message: "Product added to wishlist successfully",
             code: 200,
+            data: user.wishlist,
         });
     } catch (error) {
         console.error(error);
@@ -32,15 +27,9 @@ exports.addWhishlist = async (req, res) => {
 };
 
 exports.getWhishlists = async (req, res) => {
-    console.log("req.userToken", req.userToken);
-
     try {
         const userId = req.userToken.id;
-        console.log("userId", userId);
-
         const user = await User.findById(userId);
-        console.log(user);
-
         if (!user) {
             return res.json({
                 message: "User not found",
@@ -48,8 +37,9 @@ exports.getWhishlists = async (req, res) => {
             });
         }
         return res.json({
-            message: "wishlist: user.wishlist",
+            message: "whishlist found",
             code: 200,
+            data: user.wishlist,
         });
     } catch (error) {
         console.error(error);
@@ -61,27 +51,36 @@ exports.getWhishlists = async (req, res) => {
 };
 
 exports.deleteWhishlist = async (req, res) => {
-    console.log("userId");
-
-    const userId = req.userToken.id;
-    const user = await User.findById(userId);
-    const productId = req.query.productId
-    console.log(user);
-    if (!user) {
+    try {
+        const userId = req.userToken.id;
+        const user = await User.findById(userId);
+        const productId = req.query.productId;
+        if (!user) {
+            return res.json({
+                message: "User not found",
+                code: 404,
+            });
+        }
+        if (!productId) {
+            return res.json({
+                code: 404,
+                message: "productId not found",
+            });
+        }
+        user.wishlist = user.wishlist.filter(
+            (id) => id.toString() !== productId
+        );
+        await user.save();
         return res.json({
-            message: "User not found",
-            code: 404,
+            message: "Success",
+            code: 200,
+            data: user.wishlist,
+        });
+    } catch (err) {
+        console.log(`erreur : ${err}`);
+        return res.json({
+            message: "bad request",
+            code: 400,
         });
     }
-
-    await user.deleteOne(
-        { "user.wishlist": productId }
-        
-      );
-
-    console.log(user);
-
-    res.send(user.wishlist)
-
-   
 };
