@@ -1,4 +1,20 @@
 const product = require("../schema/product.schema");
+const fs = require("fs");
+
+const getRandomImage = () => {
+    const images = fs.readdirSync("./src/public/uploads/");
+
+    const randomImage = Math.floor(Math.random() * (images.length / 2) - 1);
+
+    const packshot = fs.readFileSync(`./src/public/uploads/product${randomImage}_packshot.jpeg`, { encoding: "base64" });
+    const jpg = fs.readFileSync(`./src/public/uploads/product${randomImage}.jpeg`, { encoding: "base64" });
+
+    return {
+        packshot,
+        jpg,
+    };
+
+}
 
 exports.getProducts = async (req, res, next) => {
     try {
@@ -9,10 +25,13 @@ exports.getProducts = async (req, res, next) => {
                 message: "Product not found",
             });
         }
+
         return res.json({
             message: "Success",
             code: 200,
-            data: products,
+            data: {
+                products
+            },
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
@@ -40,10 +59,16 @@ exports.getProduct = async (req, res, next) => {
             });
         }
 
+        const { packshot, jpg } = getRandomImage();
         return res.json({
             message: "Success",
             code: 200,
-            data: products,
+            data: {
+                products,
+                packshot,
+                jpg
+            },
+
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
