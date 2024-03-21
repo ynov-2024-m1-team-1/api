@@ -14,6 +14,12 @@ var orderSchema = new mongoose.Schema({
         required: true,
         enum: ["payed", "pending refund", "refunded"],
     },
+    products: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "product",
+        },
+    ],
 });
 
 module.exports = mongoose.model("order", orderSchema);
