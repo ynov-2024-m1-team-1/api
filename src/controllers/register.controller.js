@@ -1,6 +1,6 @@
 const User = require("../schema/user.schema.js");
 const bcrypt = require("bcrypt");
-const  senderEmail  = require('../brevo/emailSender.js')
+const senderEmail = require("../brevo/emailSender.js");
 const saltRounds = 10;
 
 async function hashPassword(password) {
@@ -14,23 +14,15 @@ async function hashPassword(password) {
 }
 
 exports.Register = async (req, res, next) => {
-    const {
-        surname,
-        name,
-        mail,
-        password,
-        adress,
-        postalCode,
-        town,
-        phone,
-    } = req.body;
+    const { surname, name, email, password, address, postalCode, town, phone } =
+        req.body;
 
     if (
         !surname ||
         !name ||
-        !mail ||
+        !email ||
         !password ||
-        !adress ||
+        !address ||
         !postalCode ||
         !town ||
         !phone
@@ -57,9 +49,9 @@ exports.Register = async (req, res, next) => {
         const newUser = await User.create({
             name,
             surname,
-            mail,
+            email,
             password: await hashPassword(password),
-            adress,
+            address,
             postalCode,
             town,
             phone,
@@ -71,7 +63,6 @@ exports.Register = async (req, res, next) => {
             data: newUser,
         });
         senderEmail(newUser);
- 
     } catch (error) {
         console.error(error);
         return res.send({
