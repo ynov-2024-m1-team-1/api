@@ -42,7 +42,7 @@ exports.Register = async (req, res, next) => {
                     (existingUserByEmail ? "email" : "phone number") +
                     " already exists",
                 code: 409,
-                data: existingUserByEmail ? mail : phone,
+                data: existingUserByEmail ? email : phone,
             });
         }
 
