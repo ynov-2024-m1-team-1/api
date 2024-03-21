@@ -29,6 +29,7 @@ async function createProducts(newProducts) {
 async function createPrice(newProducts) {
     for (let i = 0; i < newProducts.length; i++) {
         const price = await stripe.prices.create({
+            id: String(newProducts[i]._id),
             product: String(newProducts[i]._id),
             unit_amount: newProducts[i].price * 100,
             currency: "eur",

@@ -1,3 +1,5 @@
+const dotenv = require("dotenv");
+dotenv.config();
 const stripe = require("stripe")(
     process.env.DEBUG
         ? process.env.STRIPE_TEST_KEY
@@ -9,30 +11,27 @@ async function createCheckoutSession(user) {
         line_items: [
             {
                 price_data: {
-                    currency: "eur",
+                    currency: "usd",
                     product_data: {
-                        name: "Access to SWSPwned code",
+                        name: "T-shirt",
                     },
-                    unit_amount: 200,
+                    unit_amount: 2000,
                 },
                 quantity: 1,
             },
         ],
         allow_promotion_codes: true,
         mode: "payment",
-        success_url: TEST
-            ? `http://localhost:3001/code?session_id={CHECKOUT_SESSION_ID}`
-            : `${process.env.FRONT_URL}/code?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: TEST
-            ? "http://localhost:3001/"
-            : process.env.FRONT_URL + "/",
-        metadata: {
-            id,
-            date,
-            start,
-        },
+        success_url: "https://example.com/success",
     });
     return session;
 }
+
+(async () => {
+    //const session = await createCheckoutSession();
+    const stripeProducts = await stripe.products.list();
+    console.log(stripeProducts);
+    console.log(session);
+})();
 
 module.exports = createCheckoutSession;
