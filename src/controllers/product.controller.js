@@ -1,4 +1,5 @@
 const product = require("../schema/product.schema");
+const pushNewProduct = require("../stripe/Products");
 const fs = require("fs");
 
 const getRandomImage = () => {
@@ -6,15 +7,20 @@ const getRandomImage = () => {
 
     const randomImage = Math.floor(Math.random() * (images.length / 2) - 1);
 
-    const packshot = fs.readFileSync(`./src/public/uploads/product${randomImage}_packshot.jpeg`, { encoding: "base64" });
-    const jpg = fs.readFileSync(`./src/public/uploads/product${randomImage}.jpeg`, { encoding: "base64" });
+    const packshot = fs.readFileSync(
+        `./src/public/uploads/product${randomImage}_packshot.jpeg`,
+        { encoding: "base64" }
+    );
+    const jpg = fs.readFileSync(
+        `./src/public/uploads/product${randomImage}.jpeg`,
+        { encoding: "base64" }
+    );
 
     return {
         packshot,
         jpg,
     };
-
-}
+};
 
 exports.getProducts = async (req, res, next) => {
     try {
@@ -30,7 +36,7 @@ exports.getProducts = async (req, res, next) => {
             message: "Success",
             code: 200,
             data: {
-                products
+                products,
             },
         });
     } catch (err) {
@@ -66,9 +72,8 @@ exports.getProduct = async (req, res, next) => {
             data: {
                 products,
                 packshot,
-                jpg
+                jpg,
             },
-
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
@@ -153,4 +158,40 @@ exports.updateProduct = async (req, res, next) => {
             code: 400,
         });
     }
+};
+
+exports.createProduct = async (req, res, next) => {
+    if (!req.userToken.admin) {
+        return res.json({
+            code: 401,
+            message: "Unauthorized",
+        });
+    }
+    const body = req.body;
+    if (!body) {
+        return res.json({
+            code: 400,
+            message: "Body is required",
+        });
+    }
+    if (!body.name || !body.price || !body.active || !body.description) {
+        return res.json({
+            code: 400,
+            message: "Name, price and active are required",
+        });
+    }
+    product.create(body, async (err, result) => {
+        if (err) {
+            return res.json({
+                code: 400,
+                message: "Failed to create product",
+            });
+        }
+        await pushNewProduct.pushNewProduct(result);
+        return res.json({
+            message: "Success",
+            code: 200,
+            data: result,
+        });
+    });
 };
