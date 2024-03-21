@@ -12,7 +12,8 @@ var orderSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        enum: ["payed", "pending refund", "refunded"],
+        enum: ["pending payment", "payed", "pending refund", "refunded"],
+        default: "pending payment",
     },
     products: [
         {

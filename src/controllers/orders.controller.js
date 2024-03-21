@@ -1,10 +1,9 @@
-const product = require("../schema/product.schema");
-const User = require("../schema/user.schema.js");
+const order = require("../schema/orders.schema");
 
-exports.getWhishlists = async (req, res) => {
+exports.getOrders = async (req, res) => {
     try {
-        const products = await product.find();
-        if (!products)
+        const orders = await order.find();
+        if (!orders)
             return res.json({
                 message: "Not found",
                 code: 404,
@@ -12,7 +11,7 @@ exports.getWhishlists = async (req, res) => {
         return res.json({
             message: "Success",
             code: 200,
-            data: products,
+            data: orders,
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
@@ -23,7 +22,7 @@ exports.getWhishlists = async (req, res) => {
     }
 };
 
-exports.getWhishlist = async (req, res, next) => {
+exports.getOrder = async (req, res, next) => {
     try {
         const id = req.params.id;
         if (!id) {
@@ -32,8 +31,8 @@ exports.getWhishlist = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-        const products = await product.findOne({ _id: id });
-        if (!products) {
+        const orders = await order.findOne({ _id: id });
+        if (!orders) {
             return res.json({
                 code: 404,
                 message: "Product not found",
@@ -42,7 +41,7 @@ exports.getWhishlist = async (req, res, next) => {
         return res.json({
             message: "Success",
             code: 200,
-            data: products,
+            data: orders,
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
@@ -53,7 +52,7 @@ exports.getWhishlist = async (req, res, next) => {
     }
 };
 
-exports.deleteWhishlist = async (req, res, next) => {
+exports.deleteOrder = async (req, res, next) => {
     try {
         const id = req.params.id;
         if (!id) {
@@ -62,8 +61,8 @@ exports.deleteWhishlist = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-        const products = await product.deleteOne({ _id: id });
-        if (!products) {
+        const orders = await order.deleteOne({ _id: id });
+        if (!orders) {
             return res.json({
                 code: 404,
                 message: "Product not found",
@@ -72,7 +71,7 @@ exports.deleteWhishlist = async (req, res, next) => {
         return res.json({
             message: "Success",
             code: 200,
-            data: products,
+            data: orders,
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
@@ -83,25 +82,25 @@ exports.deleteWhishlist = async (req, res, next) => {
     }
 };
 
-exports.addWhishlist = async (req, res, next) => {
+exports.createOrder = async (req, res, next) => {
     try {
-        const { name, price, description, image } = req.body;
-        if (!name || !price || !description || !image) {
+        const { price, products, shippingMethod } = req.body;
+        if (!price || !products || !shippingMethod) {
             return res.json({
                 code: 400,
                 message: "Missing required fields",
             });
         }
-        const products = await product.create({
-            name,
-            price,
-            description,
-            image,
+        const newOrder = await order.create({
+            price: price,
+            articleNumber: products.length,
+            shippingMethod: shippingMethod,
+            products: products,
         });
         return res.json({
             message: "Success",
             code: 200,
-            data: products,
+            data: newOrder,
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
