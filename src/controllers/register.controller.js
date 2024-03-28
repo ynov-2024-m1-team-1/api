@@ -34,7 +34,7 @@ exports.Register = async (req, res, next) => {
     }
 
     try {
-        const existingUserByEmail = await User.findOne({ mail });
+        const existingUserByEmail = await User.findOne({ email });
         const existingUserByPhone = await User.findOne({ phone });
         if (existingUserByEmail || existingUserByPhone) {
             return res.send({
@@ -42,7 +42,7 @@ exports.Register = async (req, res, next) => {
                     (existingUserByEmail ? "email" : "phone number") +
                     " already exists",
                 code: 409,
-                data: existingUserByEmail ? mail : phone,
+                data: existingUserByEmail ? email : phone,
             });
         }
 
