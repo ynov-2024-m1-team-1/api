@@ -93,12 +93,21 @@ exports.createOrder = async (req, res, next) => {
                 message: "Missing required fields",
             });
         }
+        const user = await userSchema.findById(req.userToken.id);
+        if (!user) {
+            return res.json({
+                code: 404,
+                message: "User not found",
+            });
+        }
         const newOrder = await order.create({
             price: price,
             articleNumber: products.length,
             shippingMethod: shippingMethod,
             products: products,
         });
+        user.orders.push(newOrder._id);
+        await user.save();
         return res.json({
             message: "Success",
             code: 200,
