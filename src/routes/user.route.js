@@ -219,7 +219,7 @@ const userController = require("../controllers/user.controller");
 
 router.get("/:id", checkJWT, userController.getUser);
 router.get("/", checkJWT, userController.getUsers);
-router.get("/me", checkJWT, userController.getMe);
+router.get("/self/me", checkJWT, userController.getMe);
 router.delete("/delete/:id", checkJWT, userController.deleteUser);
 router.put("/update/:id", checkJWT, userController.updateUser);
 
