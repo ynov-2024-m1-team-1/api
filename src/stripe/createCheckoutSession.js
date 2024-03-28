@@ -40,10 +40,13 @@ async function createCheckoutSession(order, user) {
     const session = await stripe.checkout.sessions.create({
         line_items: priceArray,
         allow_promotion_codes: true,
-        billing_address_collection:
-            order.shippingMethod === "standard" ? "required" : "auto",
         mode: "payment",
-        shipping_address_collection: {},
+        shipping_address_collection:
+            order.shippingMethod === "standard"
+                ? {
+                      allowed_countries: ["FR"],
+                  }
+                : {},
         success_url: "https://team.faldin.xyz",
         cancel_url: "https://team.faldin.xyz/asdjajhdghjaghjdghjasgd",
     });
