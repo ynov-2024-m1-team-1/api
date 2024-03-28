@@ -15,7 +15,6 @@ const app = express();
 
 // parse json request body
 
-app.use("./stripe/", webhookStripe);
 app.use(express.json());
 
 // parse urlencoded request body
