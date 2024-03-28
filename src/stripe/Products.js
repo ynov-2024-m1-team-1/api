@@ -22,17 +22,10 @@ async function createProducts(newProducts) {
         const product = await stripe.products.create({
             name: newProducts[i].name,
             id: String(newProducts[i]._id),
-        });
-    }
-}
-
-async function createPrice(newProducts) {
-    for (let i = 0; i < newProducts.length; i++) {
-        const price = await stripe.prices.create({
-            id: String(newProducts[i]._id),
-            product: String(newProducts[i]._id),
-            unit_amount: newProducts[i].price * 100,
-            currency: "eur",
+            default_price_data: {
+                currency: "eur",
+                unit_amount: newProducts[i].price * 100,
+            },
         });
     }
 }
@@ -41,13 +34,11 @@ async function checkStartStripe() {
     const products = await product.find();
     const newProducts = await retrieveProducts(products);
     await createProducts(newProducts);
-    await createPrice(newProducts);
 }
 
 async function pushNewProduct(product) {
     const newProduct = await retrieveProducts([product]);
     await createProducts(newProduct);
-    await createPrice(newProduct);
 }
 
 module.exports = { checkStartStripe, pushNewProduct };

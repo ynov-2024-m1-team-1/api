@@ -180,18 +180,18 @@ exports.createProduct = async (req, res, next) => {
             message: "Name, price and active are required",
         });
     }
-    product.create(body, async (err, result) => {
-        if (err) {
-            return res.json({
-                code: 400,
-                message: "Failed to create product",
-            });
-        }
-        await pushNewProduct.pushNewProduct(result);
+    try {
+        const newProduct = await product.create(body);
+        await pushNewProduct(newProduct);
+    } catch (e) {
         return res.json({
-            message: "Success",
-            code: 200,
-            data: result,
+            code: 400,
+            message: "Failed to create product",
         });
+    }
+    return res.json({
+        message: "Success",
+        code: 200,
+        data: newProduct,
     });
 };

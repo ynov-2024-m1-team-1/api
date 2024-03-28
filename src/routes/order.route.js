@@ -149,7 +149,7 @@ const express = require("express");
 const checkJWT = require("../middlewares/checkJWT");
 
 const router = express.Router();
-const orderController = require("../controllers/order.controller");
+const orderController = require("../controllers/orders.controller");
 
 router.get("/:id", checkJWT, orderController.getOrder);
 router.get("/", checkJWT, orderController.getOrders);
