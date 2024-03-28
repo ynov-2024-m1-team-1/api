@@ -12,6 +12,6 @@ router.use("/auth", authRoute);
 router.use("/whishlist", wishlistRoute);
 router.use("/users", userRoute);
 router.use("/order", orderRoute);
-router.use("/stripe", stripeRoute);
+//router.use("/stripe", stripeRoute);
 
 module.exports = router;
