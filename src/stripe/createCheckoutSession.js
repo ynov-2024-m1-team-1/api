@@ -1,5 +1,4 @@
 const dotenv = require("dotenv");
-const ordersSchema = require("../schema/orders.schema");
 const productSchema = require("../schema/product.schema");
 dotenv.config();
 const stripe = require("stripe")(
@@ -49,15 +48,11 @@ async function createCheckoutSession(order) {
                 : {},
         success_url: "https://team.faldin.xyz",
         cancel_url: "https://team.faldin.xyz/asdjajhdghjaghjdghjasgd",
+        metadat: {
+            order: order._id,
+        },
     });
     return session.url;
 }
-
-// (async () => {
-//     const userOrder = await ordersSchema.findById("660536fecd44baf665dbd090");
-
-//     const session = await createCheckoutSession(userOrder);
-//     console.log(session);
-// })();
 
 module.exports = createCheckoutSession;
