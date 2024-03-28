@@ -6,6 +6,7 @@ const routes = require("./routes");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const dotenv = require("dotenv");
+const checkStartStripe = require("./stripe/Products");
 dotenv.config();
 require("./mongoConnection");
 
@@ -19,19 +20,21 @@ app.use(express.urlencoded({ extended: true }));
 
 // cors
 
-if (process.env.DEBUG === 'true') {
-    app.use(cors({
-        credentials: true,
-        origin: '*'
-    }))
+if (process.env.DEBUG === "true") {
+    app.use(
+        cors({
+            credentials: true,
+            origin: "*",
+        })
+    );
+} else {
+    app.use(
+        cors({
+            credentials: true,
+            origin: ["http://team.faldin.xyz", "https://team.faldin.xyz"],
+        })
+    );
 }
-else {
-    app.use(cors({
-        credentials: true,
-        origin: ['http://team.faldin.xyz', 'https://team.faldin.xyz']
-    }))
-}
-
 
 //access to public folder
 app.use(express.static(__dirname + "/public"));
@@ -62,6 +65,8 @@ const options = {
     },
     apis: ["./src/routes/*.js"],
 };
+
+checkStartStripe.checkStartStripe();
 
 const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
