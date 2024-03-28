@@ -154,6 +154,11 @@ const orderController = require("../controllers/orders.controller");
 router.get("/:id", checkJWT, orderController.getOrder);
 router.get("/", checkJWT, orderController.getOrders);
 router.post("/", checkJWT, orderController.createOrder);
+router.post(
+    "/createCheckoutSession",
+    checkJWT,
+    orderController.createCheckoutSession
+);
 router.delete("/delete/:id", checkJWT, orderController.deleteOrder);
 
 module.exports = router;

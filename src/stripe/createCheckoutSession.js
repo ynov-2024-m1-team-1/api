@@ -34,7 +34,7 @@ async function createPriceArray(order) {
     return lineItems;
 }
 
-async function createCheckoutSession(order, user) {
+async function createCheckoutSession(order) {
     const priceArray = await createPriceArray(order);
 
     const session = await stripe.checkout.sessions.create({
@@ -50,15 +50,14 @@ async function createCheckoutSession(order, user) {
         success_url: "https://team.faldin.xyz",
         cancel_url: "https://team.faldin.xyz/asdjajhdghjaghjdghjasgd",
     });
-    return session;
+    return session.url;
 }
 
-(async () => {
-    const userOrder = await ordersSchema.findById("660536fecd44baf665dbd090");
-    //await createPriceArray(userOrder);
+// (async () => {
+//     const userOrder = await ordersSchema.findById("660536fecd44baf665dbd090");
 
-    const session = await createCheckoutSession(userOrder);
-    console.log(session);
-})();
+//     const session = await createCheckoutSession(userOrder);
+//     console.log(session);
+// })();
 
 module.exports = createCheckoutSession;
