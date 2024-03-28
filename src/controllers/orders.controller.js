@@ -1,4 +1,6 @@
 const order = require("../schema/orders.schema");
+const userSchema = require("../schema/user.schema");
+const createCheckoutSession = require("../stripe/createCheckoutSession");
 
 exports.getOrders = async (req, res) => {
     try {
@@ -91,12 +93,21 @@ exports.createOrder = async (req, res, next) => {
                 message: "Missing required fields",
             });
         }
+        const user = await userSchema.findById(req.userToken.id);
+        if (!user) {
+            return res.json({
+                code: 404,
+                message: "User not found",
+            });
+        }
         const newOrder = await order.create({
             price: price,
             articleNumber: products.length,
             shippingMethod: shippingMethod,
             products: products,
         });
+        user.orders.push(newOrder._id);
+        await user.save();
         return res.json({
             message: "Success",
             code: 200,
@@ -104,6 +115,35 @@ exports.createOrder = async (req, res, next) => {
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
+        return res.json({
+            message: "bad request",
+            code: 400,
+        });
+    }
+};
+
+exports.createCheckoutSession = async (req, res, next) => {
+    if (!req.query.orderId) {
+        return res.json({
+            code: 400,
+            message: "Order id is required",
+        });
+    }
+    try {
+        const userOrder = await order.findById(req.query.orderId);
+        if (!userOrder) {
+            return res.json({
+                code: 404,
+                message: "Order not found",
+            });
+        }
+        const checkoutUrl = await createCheckoutSession(userOrder);
+        return res.json({
+            message: "Success",
+            code: 200,
+            data: checkoutUrl,
+        });
+    } catch (e) {
         return res.json({
             message: "bad request",
             code: 400,
