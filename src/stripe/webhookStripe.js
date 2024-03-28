@@ -9,9 +9,9 @@ const router = express.Router();
 const endpointSecret =
     "whsec_f653a01976cbb9c429fc94e11018e1301c313d8cfe96203f0be563e972a2fbea";
 
-exports.router.post(
+const webhook = router.post(
     "/webhook",
-    raw({ type: "application/json" }),
+    express.raw({ type: "application/json" }),
     async (req, res) => {
         const sig = req.headers["stripe-signature"];
         if (!sig) {
@@ -59,3 +59,5 @@ exports.router.post(
         res.send("OK");
     }
 );
+
+exports.webhook = webhook;

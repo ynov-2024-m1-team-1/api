@@ -7,12 +7,15 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const dotenv = require("dotenv");
 const checkStartStripe = require("./stripe/Products");
+const webhookStripe = require("./stripe/webhookStripe");
 dotenv.config();
 require("./mongoConnection");
 
 const app = express();
 
 // parse json request body
+
+app.use("./stripe/", webhookStripe);
 app.use(express.json());
 
 // parse urlencoded request body
