@@ -47,7 +47,7 @@ async function createCheckoutSession(order) {
                   }
                 : {},
         success_url: "https://team.faldin.xyz",
-        cancel_url: "https://team.faldin.xyz/asdjajhdghjaghjdghjasgd",
+        cancel_url: "https://team.faldin.xyz/cart",
         metadat: {
             order: order._id,
         },
