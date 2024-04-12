@@ -6,6 +6,7 @@ var productSchema = new mongoose.Schema({
     image: { type: String, required: false },
     active: { type: Boolean, required: true, default: true },
     packshot: { type: String, required: false },
+    jpg: { type: String, required: false },
     price: { type: String, required: true },
 });
 
