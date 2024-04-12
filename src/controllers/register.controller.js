@@ -64,7 +64,7 @@ exports.Register = async (req, res, next) => {
             message: "User registered successfully",
             code: 200,
             data: newUser,
-            token: token,
+            token: token, 
         });
         senderEmail(newUser);
     } catch (error) {
