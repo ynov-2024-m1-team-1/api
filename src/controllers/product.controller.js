@@ -25,6 +25,13 @@ const getRandomImage = () => {
 exports.getProducts = async (req, res, next) => {
     try {
         const products = await product.find();
+
+        products.forEach((product) => {
+            const { packshot, jpg } = getRandomImage();
+            product.jpg = jpg;
+            product.packshot = packshot;
+        });
+
         if (!products) {
             return res.json({
                 code: 404,
