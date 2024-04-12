@@ -1,6 +1,7 @@
 const User = require("../schema/user.schema.js");
 const bcrypt = require("bcrypt");
 const senderEmail = require("../brevo/emailSender.js");
+const jwt = require("jsonwebtoken");
 const saltRounds = 10;
 
 async function hashPassword(password) {
@@ -57,10 +58,13 @@ exports.Register = async (req, res, next) => {
             phone,
         });
 
+        const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "365d" });
+
         res.send({
-            message: "User resgistered successfully",
+            message: "User registered successfully",
             code: 200,
             data: newUser,
+            token: token,
         });
         senderEmail(newUser);
     } catch (error) {
