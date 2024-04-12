@@ -5,7 +5,7 @@ const fs = require("fs");
 const getRandomImage = () => {
     const images = fs.readdirSync("./src/public/uploads/");
 
-    const randomImage = Math.floor(Math.random() * (images.length / 2) - 1);
+    const randomImage = Math.floor(Math.random() * (images.length / 2));
 
     const packshot = fs.readFileSync(
         `./src/public/uploads/product${randomImage}_packshot.jpeg`,
@@ -25,6 +25,13 @@ const getRandomImage = () => {
 exports.getProducts = async (req, res, next) => {
     try {
         const products = await product.find();
+
+        products.forEach((product) => {
+            const { packshot, jpg } = getRandomImage();
+            product.jpg = jpg;
+            product.packshot = packshot;
+        });
+
         if (!products) {
             return res.json({
                 code: 404,
@@ -64,16 +71,14 @@ exports.getProduct = async (req, res, next) => {
                 message: "Product not found",
             });
         }
-
         const { packshot, jpg } = getRandomImage();
+        products.jpg = jpg;
+        products.packshot = packshot;
+
         return res.json({
             message: "Success",
             code: 200,
-            data: {
-                products,
-                packshot,
-                jpg,
-            },
+            data: products,
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
