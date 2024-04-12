@@ -38,7 +38,7 @@ exports.getUser = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-        if (id !== req.userToken.id || req.userToken.admin != true) {
+        if (id !== req.userToken.id && req.userToken.admin != true) {
             return res.json({
                 code: 401,
                 message: "Unauthorized",
@@ -106,7 +106,7 @@ exports.deleteUser = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-        if (id !== req.userToken.id || req.userToken.admin != true) {
+        if (id !== req.userToken.id && req.userToken.admin != true) {
             return res.json({
                 code: 401,
                 message: "Unauthorized",
@@ -143,7 +143,7 @@ exports.updateUser = async (req, res, next) => {
                 message: "Id is required",
             });
         }
-        if (id !== req.userToken.id || req.userToken.admin != true) {
+        if (id !== req.userToken.id && req.userToken.admin != true) {
             return res.json({
                 code: 401,
                 message: "Unauthorized",
