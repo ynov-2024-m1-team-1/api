@@ -64,16 +64,14 @@ exports.getProduct = async (req, res, next) => {
                 message: "Product not found",
             });
         }
-
         const { packshot, jpg } = getRandomImage();
+        products.jpg = jpg;
+        products.packshot = packshot;
+
         return res.json({
             message: "Success",
             code: 200,
-            data: {
-                products,
-                packshot,
-                jpg,
-            },
+            data: products,
         });
     } catch (err) {
         console.log(`erreur : ${err}`);
