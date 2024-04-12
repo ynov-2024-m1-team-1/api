@@ -32,7 +32,7 @@ const getRandomImage = () => {
     };
 
     const randomImage = Math.floor(
-        Math.random() * (Object.keys(imageObject).length / 2)
+        Math.random() * Object.keys(imageObject).length
     );
 
     const packshot = imageObject[randomImage].packshot;
