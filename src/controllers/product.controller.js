@@ -5,7 +5,7 @@ const fs = require("fs");
 const getRandomImage = () => {
     const images = fs.readdirSync("./src/public/uploads/");
 
-    const randomImage = Math.floor(Math.random() * (images.length / 2) - 1);
+    const randomImage = Math.floor(Math.random() * (images.length / 2));
 
     const packshot = fs.readFileSync(
         `./src/public/uploads/product${randomImage}_packshot.jpeg`,
