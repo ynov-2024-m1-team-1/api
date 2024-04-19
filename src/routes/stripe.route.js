@@ -1,8 +1,8 @@
-const express = require("express");
-const router = express.Router();
+// const express = require("express");
+// const router = express.Router();
 
-const webhookStripe = require("../stripe/webhookStripe");
+// const webhookStripe = require("../stripe/webhookStripe");
 
-router.post("/webhook", webhookStripe.webhook);
+// router.post("/webhook", webhookStripe.webhook);
 
-module.exports = router;
+// module.exports = router;
